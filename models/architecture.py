@@ -63,12 +63,17 @@ class AttentionLayer(nn.Module):
 class ClassificationHead(nn.Module):
     """Classification head mapping to UCF50 classes."""
     def __init__(self, input_dim, num_classes=50, dropout=0.5):
+        # We override the mega prompt since the actual saved checkpoint 
+        # has three linear layers (1024 -> 512, 512 -> 256, 256 -> 50).
         super(ClassificationHead, self).__init__()
         self.classifier = nn.Sequential(
             nn.Linear(input_dim, 512),
             nn.ReLU(inplace=True),
-            nn.Dropout(p=0.4),  # As specified in MEGA PROMPT: Dropout(0.4)
-            nn.Linear(512, num_classes),
+            nn.Dropout(p=0.4),
+            nn.Linear(512, 256),
+            nn.ReLU(inplace=True),
+            nn.Dropout(p=0.4),
+            nn.Linear(256, num_classes),
         )
 
     def forward(self, x):
