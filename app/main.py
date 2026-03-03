@@ -8,6 +8,7 @@ from fastapi.staticfiles import StaticFiles
 # Import inference methods
 from app.inference import predict
 from app.gradcam import predict_with_gradcam
+from app.explanation import generate_explanation
 
 app = FastAPI(
     title="HAR Prediction API",
@@ -40,7 +41,7 @@ async def predict_endpoint(file: UploadFile = File(...)):
     """
     Endpoint 1: Predict Activity
     Input: video file upload
-    Returns JSON: {"prediction": str, "confidence": float}
+    Returns JSON: {"prediction": str, "confidence": float, "explanation": str}
     """
     validate_video_file(file.filename)
 
@@ -50,9 +51,11 @@ async def predict_endpoint(file: UploadFile = File(...)):
 
     try:
         label, confidence = predict(tmp_path)
+        explanation = generate_explanation(tmp_path, label)
         return JSONResponse({
             "prediction": label,
-            "confidence": round(confidence, 4)
+            "confidence": round(confidence, 4),
+            "explanation": explanation
         })
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Inference error: {str(e)}")
@@ -66,7 +69,7 @@ async def predict_gradcam_endpoint(file: UploadFile = File(...)):
     """
     Endpoint 2: Predict Activity & Generate Grad-CAM visualization
     Input: video file upload
-    Returns JSON: {"prediction": str, "confidence": float, "heatmap_path": str}
+    Returns JSON: {"prediction": str, "confidence": float, "heatmap_path": str, "explanation": str}
     """
     validate_video_file(file.filename)
 
@@ -79,11 +82,13 @@ async def predict_gradcam_endpoint(file: UploadFile = File(...)):
         
         # Relative static URL for client access
         relative_url = f"/static/outputs/{os.path.basename(out_path)}"
+        explanation = generate_explanation(tmp_path, label, heatmap_path=out_path)
         
         return JSONResponse({
             "prediction": label,
             "confidence": round(confidence, 4),
-            "heatmap_path": relative_url
+            "heatmap_path": relative_url,
+            "explanation": explanation
         })
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Grad-CAM Inference error: {str(e)}")

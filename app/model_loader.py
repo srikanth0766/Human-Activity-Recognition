@@ -19,7 +19,12 @@ def load_model():
     model = HARModel(num_classes=50, pretrained_backbone=False)
 
     # 2. Get device
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    if torch.backends.mps.is_available():
+        device = torch.device("mps")
+    elif torch.cuda.is_available():
+        device = torch.device("cuda")
+    else:
+        device = torch.device("cpu")
 
     # 3. Load weights/best_model.pth
     # Construct absolute path ensuring safety from where it's executed

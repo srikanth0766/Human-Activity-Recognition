@@ -2,3 +2,4 @@ weights/
 *.pth
 __pycache__/
 *.pyc
+venv/
