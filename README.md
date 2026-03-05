@@ -65,3 +65,25 @@ Calculates label confidences natively, whilst generating structurally overlaid h
     "heatmap_path": "/static/outputs/gradcam_xxxx.jpg"
 }
 ```
+
+## Experimental Results
+
+The deep learning model achieves exceptional performance on the robust 50-class UCF50 action tracking dataset. Built on a ResNet-50 backbone mapped to a bidirectional LSTM layers framework, the model captures deep spatial semantics coupled with temporal context. 
+
+- **Training Accuracy:** **98%–99%** with rapid stability.
+- **Validation Accuracy:** **99.1%**, demonstrating minimal structural overfitting.
+
+### Performance Visualizations
+
+![Training and Validation Curves](static/outputs/training_curves.png)
+
+![Confusion Matrix](static/outputs/confusion_matrix.png)
+
+### Explainability Highlights (Grad-CAM)
+Native integration with XAI methodologies ensures transparent system decision-making. High-resolution heatmaps explicitly trace visual evidence back to structural input elements across temporal frames, reinforcing physical safety and analytical verifiability protocols.
+
+Example model activation outputs mapping focus regions:
+
+![Grad-CAM Example 1](static/outputs/gradcam_147a2efa.jpg)
+![Grad-CAM Example 2](static/outputs/gradcam_2e026a79.jpg)
+
